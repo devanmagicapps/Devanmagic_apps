@@ -162,7 +162,7 @@
         // Import Firebase modules
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
-        import { getFirestore, collection, onSnapshot, runTransaction, doc, writeBatch, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+        import { getFirestore, collection, onSnapshot, runTransaction, doc, writeBatch, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAk6-5WxG2EbBjePe9hPQR9sTtrAVhJldo",
@@ -172,7 +172,7 @@
             messagingSenderId: "397054292069",
             appId: "1:397054292069:web:944838196845ebd490d68c"
         };
-        const ADMIN_UID = "FYEs6gOXjVg1TlJF15xCSeQQITb2"; // Ganti UID di baris ini
+        const ADMIN_UID = "FYEs6gOXjVg1TlJF15xCSeQQITb2";
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -227,8 +227,10 @@
             e.preventDefault();
             loginBtn.disabled = true;
             loginError.textContent = '';
+            const email = document.getElementById('email-input').value;
+            const password = document.getElementById('password-input').value;
             try {
-                await signInWithEmailAndPassword(auth, loginForm.email.value, loginForm.password.value);
+                await signInWithEmailAndPassword(auth, email, password);
             } catch (error) {
                 loginError.textContent = 'Email atau password salah.';
                 loginBtn.disabled = false;
@@ -277,7 +279,7 @@
             const searchTerm = searchActivatedInput.value.toLowerCase();
             const filtered = allActivatedLicenses.filter(lic => 
                 lic.id.toLowerCase().includes(searchTerm) || 
-                lic.email.toLowerCase().includes(searchTerm)
+                (lic.email && lic.email.toLowerCase().includes(searchTerm))
             );
 
             activatedList.innerHTML = filtered.map(lic => `
@@ -421,4 +423,3 @@
     </script>
 </body>
 </html>
-
