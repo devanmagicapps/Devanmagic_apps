@@ -34,6 +34,22 @@
         .button-glow:hover {
             box-shadow: 0 0 20px rgba(50, 130, 184, 0.8), 0 0 30px rgba(50, 130, 184, 0.6);
         }
+        .custom-alert {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%) scale(0);
+            z-index: 100;
+            padding: 1rem 2rem;
+            border-radius: 9999px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+        }
+        .custom-alert.show {
+            transform: translateX(-50%) scale(1);
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +106,30 @@
 </div>
 
 <script>
+    function showCustomAlert(message, type = 'success') {
+        let alertBox = document.getElementById('custom-alert');
+        if (!alertBox) {
+            alertBox = document.createElement('div');
+            alertBox.id = 'custom-alert';
+            document.body.appendChild(alertBox);
+        }
+
+        alertBox.textContent = message;
+        alertBox.className = 'custom-alert show';
+
+        if (type === 'success') {
+            alertBox.classList.add('bg-green-600', 'text-white');
+            alertBox.classList.remove('bg-red-600');
+        } else if (type === 'error') {
+            alertBox.classList.add('bg-red-600', 'text-white');
+            alertBox.classList.remove('bg-green-600');
+        }
+
+        setTimeout(() => {
+            alertBox.classList.remove('show');
+        }, 3000);
+    }
+
     document.getElementById('generate-btn').addEventListener('click', () => {
         const existingCode = document.getElementById('existing-code').value;
         const productName = document.getElementById('product-name').value;
@@ -106,24 +146,32 @@
         resultSection.classList.add('hidden');
         errorMessage.classList.add('hidden');
 
-        // Input validation
-        if (!productName || !productPrice || !productShortDesc || !productFullDesc || !productPreview) {
-            errorMessage.textContent = 'Semua kolom detail produk harus diisi!';
-            errorMessage.classList.remove('hidden');
+        // Input validation with detailed messages
+        const missingFields = [];
+        if (!productName) missingFields.push("Nama Produk");
+        if (isNaN(productPrice)) missingFields.push("Harga (harus angka)");
+        if (!productShortDesc) missingFields.push("Deskripsi Singkat");
+        if (!productFullDesc) missingFields.push("Deskripsi Lengkap");
+        if (!productPreview) missingFields.push("Link YouTube Embed");
+
+        if (missingFields.length > 0) {
+            const message = `Mohon lengkapi formulir berikut: ${missingFields.join(', ')}.`;
+            showCustomAlert(message, 'error');
             return;
         }
 
         let apps = [];
         try {
-            // Use Function constructor for more reliable JavaScript code parsing
-            const sanitizedCode = existingCode.replace(/export const apps\s*=\s*/, 'return ');
-            apps = (new Function(sanitizedCode))();
-            if (!Array.isArray(apps)) {
-                throw new Error("Pasted code is not a valid array.");
+            if (existingCode.trim() !== '') {
+                const sanitizedCode = existingCode.replace(/export const apps\s*=\s*/, 'return ');
+                apps = (new Function(sanitizedCode))();
+                if (!Array.isArray(apps)) {
+                    throw new Error("Pasted code is not a valid array.");
+                }
             }
         } catch (e) {
             console.error("Failed to evaluate code:", e);
-            errorMessage.textContent = 'Invalid `products.js` file format. Please ensure you copy the entire file correctly. Error: ' + e.message;
+            errorMessage.textContent = 'Format kode `products.js` tidak valid. Pastikan Anda menyalin seluruh isi file dengan benar. Error: ' + e.message;
             errorMessage.classList.remove('hidden');
             return;
         }
@@ -156,7 +204,7 @@
         const newCodeElement = document.getElementById('new-code');
         newCodeElement.select();
         document.execCommand('copy');
-        alert('Kode berhasil disalin!');
+        showCustomAlert('Kode berhasil disalin!', 'success');
     });
 </script>
 
