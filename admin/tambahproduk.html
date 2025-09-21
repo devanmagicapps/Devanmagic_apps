@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tambah Produk Baru</title>
+    <title>Alat Tambah Produk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
@@ -15,28 +15,17 @@
         }
         .container {
             max-width: 900px;
-            margin: auto;
+            margin: 0 auto;
         }
-        .card {
-            background-color: #1a1a1a;
-            border: 2px solid #3282b8;
-            border-radius: 1.5rem;
-            padding: 2rem;
-            box-shadow: 0 0 25px rgba(50, 130, 184, 0.2);
-        }
-        .input-field, .textarea-field {
-            background-color: #2c2c2c;
-            border: 1px solid #4a4a4a;
+        input, textarea, button {
+            border-radius: 12px;
+            border: none;
+            padding: 1rem;
+            background-color: #1f2937; /* Lighter gray background */
             color: #e0e0e0;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            width: 100%;
-            transition: all 0.2s ease-in-out;
         }
-        .input-field:focus, .textarea-field:focus {
-            outline: none;
-            border-color: #3282b8;
-            box-shadow: 0 0 10px rgba(50, 130, 184, 0.5);
+        input:focus, textarea:focus, button:focus {
+            outline: 2px solid #3282b8;
         }
         .button-glow {
             box-shadow: 0 0 10px rgba(50, 130, 184, 0.6);
@@ -48,133 +37,128 @@
     </style>
 </head>
 <body>
-    <div class="container space-y-8">
-        <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-600 text-center">Alat Tambah Produk</h1>
-        <p class="text-center text-gray-400">Gunakan alat ini untuk menambahkan produk baru ke dalam file `products.js` Anda dengan mudah.</p>
 
-        <div class="card">
-            <h2 class="text-xl font-bold text-white mb-4">Langkah 1: Masukkan Data Produk Anda</h2>
-            <p class="text-sm text-gray-400 mb-4">Salin dan tempelkan seluruh isi file `products.js` Anda di bawah ini.</p>
-            <textarea id="existing-data" class="textarea-field h-48" placeholder="[ { id: 1, ... }, { id: 2, ... } ]"></textarea>
+<div class="container">
+    <h1 class="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-fuchsia-600 mb-6 text-center">Alat Tambah Produk</h1>
+    <p class="text-center text-gray-400 mb-8">Tempelkan kode `products.js` Anda di bawah, isi detail produk baru, dan dapatkan kode yang sudah diperbarui.</p>
+
+    <div class="bg-gray-900 p-8 rounded-3xl shadow-2xl space-y-6">
+        <div>
+            <label for="existing-code" class="block text-lg font-semibold mb-2">1. Kode `products.js` Anda Saat Ini</label>
+            <textarea id="existing-code" class="w-full h-48 resize-none font-mono text-sm" placeholder="Salin seluruh isi file products.js di sini..."></textarea>
         </div>
 
-        <div class="card">
-            <h2 class="text-xl font-bold text-white mb-4">Langkah 2: Isi Detail Produk Baru</h2>
-            <form id="add-product-form" class="space-y-4">
-                <div>
-                    <label for="product-name" class="block text-gray-300 font-semibold mb-1">Nama Produk</label>
-                    <input type="text" id="product-name" class="input-field" required>
-                </div>
-                <div>
-                    <label for="product-price" class="block text-gray-300 font-semibold mb-1">Harga (Angka saja, cth: 75000)</label>
-                    <input type="number" id="product-price" class="input-field" required>
-                </div>
-                <div>
-                    <label for="product-short-desc" class="block text-gray-300 font-semibold mb-1">Deskripsi Singkat</label>
-                    <input type="text" id="product-short-desc" class="input-field" required>
-                </div>
-                <div>
-                    <label for="product-full-desc" class="block text-gray-300 font-semibold mb-1">Deskripsi Lengkap</label>
-                    <textarea id="product-full-desc" class="textarea-field h-24" required></textarea>
-                </div>
-                <div>
-                    <label for="product-preview" class="block text-gray-300 font-semibold mb-1">Link YouTube (Embed)</label>
-                    <input type="url" id="product-preview" class="input-field" placeholder="https://www.youtube.com/embed/..." required>
-                </div>
-                <button type="submit" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl transition duration-200 hover:bg-blue-700 button-glow">Generate Kode</button>
-            </form>
+        <hr class="border-gray-700">
+
+        <h2 class="text-xl font-semibold mb-4">2. Detail Produk Baru</h2>
+        <div class="grid grid-cols-1 gap-4">
+            <div>
+                <label for="product-name" class="block text-sm font-medium text-gray-400 mb-1">Nama Produk</label>
+                <input type="text" id="product-name" placeholder="Contoh: The Vanishing Coin" class="w-full">
+            </div>
+            <div>
+                <label for="product-price" class="block text-sm font-medium text-gray-400 mb-1">Harga</label>
+                <input type="number" id="product-price" placeholder="Contoh: 75000" class="w-full">
+            </div>
+            <div>
+                <label for="product-short-desc" class="block text-sm font-medium text-gray-400 mb-1">Deskripsi Singkat</label>
+                <textarea id="product-short-desc" placeholder="Seketika hilangkan koin yang dipegang erat di tangan penonton." class="w-full resize-none h-20"></textarea>
+            </div>
+            <div>
+                <label for="product-full-desc" class="block text-sm font-medium text-gray-400 mb-1">Deskripsi Lengkap</label>
+                <textarea id="product-full-desc" placeholder="Tulis deskripsi produk yang panjang di sini." class="w-full resize-none h-32"></textarea>
+            </div>
+            <div>
+                <label for="product-preview" class="block text-sm font-medium text-gray-400 mb-1">Link YouTube Embed</label>
+                <input type="text" id="product-preview" placeholder="Contoh: https://www.youtube.com/embed/dQw4w9WgXcQ" class="w-full">
+            </div>
         </div>
-        
-        <div class="card hidden" id="result-card">
-            <h2 class="text-xl font-bold text-white mb-4">Langkah 3: Salin Kode untuk `products.js`</h2>
-            <p class="text-sm text-gray-400 mb-4">Salin seluruh kode di bawah ini dan tempelkan untuk mengganti isi file `products.js` Anda.</p>
-            <pre id="output-code" class="bg-gray-900 text-green-400 p-4 rounded-xl overflow-auto text-sm"></pre>
-            <button id="copy-btn" class="mt-4 w-full bg-green-600 text-white font-bold py-3 rounded-xl transition duration-200 hover:bg-green-700 button-glow">Salin Kode</button>
+
+        <button id="generate-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition duration-200 hover:bg-blue-700 button-glow mt-4">Generate Kode</button>
+
+        <hr class="border-gray-700">
+
+        <div id="result-section" class="hidden">
+            <label for="new-code" class="block text-lg font-semibold mb-2">3. Kode Baru (Siap Disalin)</label>
+            <div class="relative">
+                <textarea id="new-code" class="w-full h-48 resize-none font-mono text-sm pr-12" readonly></textarea>
+                <button id="copy-btn" class="absolute top-2 right-2 bg-gray-700 text-white px-3 py-1 rounded-lg text-xs hover:bg-gray-600 transition duration-200">Salin</button>
+            </div>
+            <p class="text-red-400 mt-2 text-sm hidden" id="error-message">Format kode tidak valid. Pastikan Anda menyalin seluruh isi file `products.js` dengan benar.</p>
         </div>
     </div>
+</div>
 
-    <script>
-        document.getElementById('add-product-form').addEventListener('submit', function(e) {
-            e.preventDefault();
+<script>
+    document.getElementById('generate-btn').addEventListener('click', () => {
+        const existingCode = document.getElementById('existing-code').value;
+        const productName = document.getElementById('product-name').value;
+        const productPrice = parseInt(document.getElementById('product-price').value);
+        const productShortDesc = document.getElementById('product-short-desc').value;
+        const productFullDesc = document.getElementById('product-full-desc').value;
+        const productPreview = document.getElementById('product-preview').value;
 
-            const existingDataText = document.getElementById('existing-data').value;
-            const name = document.getElementById('product-name').value;
-            const price = parseInt(document.getElementById('product-price').value);
-            const shortDesc = document.getElementById('product-short-desc').value;
-            const fullDesc = document.getElementById('product-full-desc').value;
-            const preview = document.getElementById('product-preview').value;
+        const resultSection = document.getElementById('result-section');
+        const newCodeElement = document.getElementById('new-code');
+        const errorMessage = document.getElementById('error-message');
 
-            if (!existingDataText) {
-                alert('Silakan masukkan data dari products.js terlebih dahulu.');
-                return;
-            }
+        // Reset display
+        resultSection.classList.add('hidden');
+        errorMessage.classList.add('hidden');
 
-            let apps = [];
-            try {
-                // Hapus `export const apps =` jika ada
-                const cleanData = existingDataText.replace('export const apps =', '').trim();
-                apps = JSON.parse(cleanData);
-            } catch (error) {
-                alert('Format data products.js tidak valid. Pastikan itu adalah array JSON yang benar.');
-                console.error(error);
-                return;
-            }
-
-            const newId = apps.length > 0 ? Math.max(...apps.map(app => app.id)) + 1 : 1;
-            
-            const newProduct = {
-                id: newId,
-                name: name,
-                price: price,
-                shortDescription: shortDesc,
-                fullDescription: fullDesc,
-                image: "https://placehold.co/400x300/1e1e1e/d1d5db?text=" + name.replace(/\s/g, "+"),
-                preview: preview
-            };
-
-            apps.push(newProduct);
-            
-            const outputString = `export const apps = ${JSON.stringify(apps, null, 4)};`;
-            
-            const outputCode = document.getElementById('output-code');
-            outputCode.textContent = outputString;
-            document.getElementById('result-card').classList.remove('hidden');
-        });
-
-        document.getElementById('copy-btn').addEventListener('click', function() {
-            const outputCode = document.getElementById('output-code');
-            const range = document.createRange();
-            range.selectNode(outputCode);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            try {
-                document.execCommand('copy');
-                alert('Kode berhasil disalin!');
-            } catch (err) {
-                console.error('Gagal menyalin kode: ', err);
-                alert('Gagal menyalin kode. Silakan salin manual.');
-            }
-            window.getSelection().removeAllRanges();
-        });
-
-        function alert(message) {
-            const alertDiv = document.createElement('div');
-            alertDiv.style.position = 'fixed';
-            alertDiv.style.top = '2rem';
-            alertDiv.style.left = '50%';
-            alertDiv.style.transform = 'translateX(-50%)';
-            alertDiv.style.backgroundColor = '#3282b8';
-            alertDiv.style.color = 'white';
-            alertDiv.style.padding = '0.75rem 1.5rem';
-            alertDiv.style.borderRadius = '2rem';
-            alertDiv.style.boxShadow = '0 0 15px rgba(50, 130, 184, 0.6)';
-            alertDiv.style.zIndex = '100';
-            alertDiv.textContent = message;
-            document.body.appendChild(alertDiv);
-            setTimeout(() => {
-                alertDiv.remove();
-            }, 3000);
+        // Input validation
+        if (!productName || !productPrice || !productShortDesc || !productFullDesc || !productPreview) {
+            errorMessage.textContent = 'Semua kolom detail produk harus diisi!';
+            errorMessage.classList.remove('hidden');
+            return;
         }
-    </script>
+
+        let apps = [];
+        try {
+            // Use Function constructor for more reliable JavaScript code parsing
+            const sanitizedCode = existingCode.replace(/export const apps\s*=\s*/, 'return ');
+            apps = (new Function(sanitizedCode))();
+            if (!Array.isArray(apps)) {
+                throw new Error("Pasted code is not a valid array.");
+            }
+        } catch (e) {
+            console.error("Failed to evaluate code:", e);
+            errorMessage.textContent = 'Invalid `products.js` file format. Please ensure you copy the entire file correctly. Error: ' + e.message;
+            errorMessage.classList.remove('hidden');
+            return;
+        }
+
+        // Determine new ID
+        const newId = apps.length > 0 ? Math.max(...apps.map(app => app.id)) + 1 : 1;
+        
+        // Create new product object
+        const newProduct = {
+            id: newId,
+            name: productName,
+            price: productPrice,
+            shortDescription: productShortDesc,
+            fullDescription: productFullDesc,
+            image: "https://placehold.co/400x300/1e1e1e/d1d5db?text=" + encodeURIComponent(productName.replace(/ /g, '+')),
+            preview: productPreview
+        };
+
+        // Add new product to the array
+        apps.push(newProduct);
+
+        // Convert the updated array back to a formatted code string
+        const updatedCode = `export const apps = ${JSON.stringify(apps, null, 4)};`;
+        newCodeElement.value = updatedCode;
+
+        resultSection.classList.remove('hidden');
+    });
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+        const newCodeElement = document.getElementById('new-code');
+        newCodeElement.select();
+        document.execCommand('copy');
+        alert('Kode berhasil disalin!');
+    });
+</script>
+
 </body>
 </html>
