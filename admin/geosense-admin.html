@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin - Geosense</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .card { background-color: #1F2937; border: 1px solid #374151; }
+        .table-container::-webkit-scrollbar { width: 6px; }
+        .table-container::-webkit-scrollbar-track { background: #1F2937; }
+        .table-container::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 3px; }
+        .btn-primary { background-color: #2563EB; }
+        .btn-primary:hover { background-color: #1D4ED8; }
+        .btn-danger { background-color: #DC2626; }
+        .btn-danger:hover { background-color: #B91C1C; }
+        .toast {
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(20px);
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900 p-4">
+        <div class="w-full max-w-md card p-8 rounded-lg shadow-2xl">
+            <h2 class="text-3xl font-bold text-center text-white mb-2">Admin Geosense</h2>
+            <p class="text-center text-gray-400 mb-6">Silakan masuk untuk melanjutkan.</p>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="email-input" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
+                    <input type="email" id="email-input" required class="w-full bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="admin@geosense.com">
+                </div>
+                <div>
+                    <label for="password-input" class="block text-sm font-medium text-gray-300 mb-1">Password</label>
+                    <input type="password" id="password-input" required class="w-full bg-gray-800 text-white border border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="••••••••">
+                </div>
+                <button type="submit" id="login-btn" class="w-full btn-primary text-white font-bold py-2.5 px-4 rounded-md transition-colors disabled:bg-gray-500">
+                    Masuk
+                </button>
+            </form>
+            <p id="login-error" class="text-red-400 text-center text-sm mt-4 h-4"></p>
+        </div>
+    </div>
+
+    <!-- Main Dashboard (Hidden by default) -->
+    <div id="dashboard" class="hidden min-h-screen">
+        <header class="bg-gray-800/50 backdrop-blur-sm sticky top-0 z-30 border-b border-gray-700">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
+                <h1 class="text-2xl font-bold text-white">Dasbor Lisensi</h1>
+                <button id="logout-btn" class="text-sm font-semibold text-gray-300 hover:text-white transition-colors">Keluar</button>
+            </div>
+        </header>
+
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+            <!-- Stats Section -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card p-6 rounded-lg flex items-center space-x-4">
+                    <div class="bg-green-500/20 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg></div>
+                    <div>
+                        <p class="text-sm text-gray-400">Tersedia</p>
+                        <p id="available-count" class="text-3xl font-bold text-white">0</p>
+                    </div>
+                </div>
+                <div class="card p-6 rounded-lg flex items-center space-x-4">
+                     <div class="bg-blue-500/20 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H5v-2H3v-2H1v-4a6 6 0 016-6h7z" /></svg></div>
+                    <div>
+                        <p class="text-sm text-gray-400">Teraktivasi</p>
+                        <p id="activated-count" class="text-3xl font-bold text-white">0</p>
+                    </div>
+                </div>
+                <div class="card p-6 rounded-lg flex items-center space-x-4">
+                     <div class="bg-red-500/20 p-3 rounded-full"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg></div>
+                    <div>
+                        <p class="text-sm text-gray-400">Dihentikan</p>
+                        <p id="terminated-count" class="text-3xl font-bold text-white">0</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Generator Section -->
+            <div class="card p-6 rounded-lg mb-8">
+                <h2 class="text-xl font-bold text-white mb-4">Buat Lisensi Baru</h2>
+                <div class="flex flex-col sm:flex-row items-center gap-4">
+                    <input type="number" id="generate-count-input" min="1" max="100" value="10" class="w-full sm:w-48 bg-gray-800 border border-gray-600 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <button id="generate-btn" class="w-full sm:w-auto btn-primary text-white font-bold py-2 px-6 rounded-md transition-colors flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                        Buat
+                    </button>
+                </div>
+            </div>
+
+            <!-- License Lists -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Available Licenses -->
+                <div class="card rounded-lg overflow-hidden">
+                    <div class="p-4 border-b border-gray-700">
+                        <h3 class="font-bold text-white">Lisensi Tersedia</h3>
+                    </div>
+                    <div class="p-4">
+                         <input type="text" id="search-available" class="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Cari kunci lisensi...">
+                    </div>
+                    <div class="table-container h-96 overflow-y-auto">
+                        <table class="w-full text-sm text-left">
+                            <tbody id="available-licenses-list">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Activated Licenses -->
+                <div class="card rounded-lg overflow-hidden">
+                    <div class="p-4 border-b border-gray-700">
+                        <h3 class="font-bold text-white">Lisensi Teraktivasi</h3>
+                    </div>
+                    <div class="p-4">
+                         <input type="text" id="search-activated" class="w-full bg-gray-800 border border-gray-600 rounded-md px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500 focus:outline-none" placeholder="Cari berdasarkan kunci atau email...">
+                    </div>
+                    <div class="table-container h-96 overflow-y-auto">
+                         <table class="w-full text-sm text-left">
+                            <thead class="text-xs text-gray-400 uppercase bg-gray-800">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Kunci Lisensi</th>
+                                    <th scope="col" class="px-6 py-3">Email</th>
+                                    <th scope="col" class="px-6 py-3">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="activated-licenses-list">
+                                <!-- JS will populate this -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+        <div class="card max-w-sm w-full rounded-lg shadow-xl p-6 text-center">
+            <h3 id="modal-title" class="text-lg font-bold text-white mb-2">Konfirmasi Aksi</h3>
+            <p id="modal-text" class="text-gray-300 mb-6">Apakah Anda yakin?</p>
+            <div class="flex justify-center gap-4">
+                <button id="modal-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-6 rounded-md">Batal</button>
+                <button id="modal-confirm-btn" class="btn-danger text-white font-bold py-2 px-6 rounded-md">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="hidden fixed bottom-5 right-5 card p-4 rounded-lg shadow-lg opacity-0 toast">
+        <p id="toast-text" class="font-semibold text-white"></p>
+    </div>
+
+    <script type="module">
+        // Import Firebase modules
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot, runTransaction, doc, writeBatch, serverTimestamp, setDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAk6-5WxG2EbBjePe9hPQR9sTtrAVhJldo",
+            authDomain: "geosensemagic.firebaseapp.com",
+            projectId: "geosensemagic",
+            storageBucket: "geosensemagic.firebasestorage.app",
+            messagingSenderId: "397054292069",
+            appId: "1:397054292069:web:944838196845ebd490d68c"
+        };
+        const ADMIN_UID = "FYEs6gOXjVg1TlJF15xCSeQQITb2"; // Ganti UID di baris ini
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // --- DOM Elements ---
+        const loginScreen = document.getElementById('login-screen');
+        const dashboard = document.getElementById('dashboard');
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        
+        const availableCountEl = document.getElementById('available-count');
+        const activatedCountEl = document.getElementById('activated-count');
+        const terminatedCountEl = document.getElementById('terminated-count');
+
+        const generateBtn = document.getElementById('generate-btn');
+        const generateCountInput = document.getElementById('generate-count-input');
+        
+        const availableList = document.getElementById('available-licenses-list');
+        const activatedList = document.getElementById('activated-licenses-list');
+        const searchAvailableInput = document.getElementById('search-available');
+        const searchActivatedInput = document.getElementById('search-activated');
+
+        const confirmationModal = document.getElementById('confirmation-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        const modalConfirmBtn = document.getElementById('modal-confirm-btn');
+        const modalCancelBtn = document.getElementById('modal-cancel-btn');
+
+        const toast = document.getElementById('toast');
+        const toastText = document.getElementById('toast-text');
+
+        let allAvailableLicenses = [];
+        let allActivatedLicenses = [];
+
+        // --- Auth Logic ---
+        onAuthStateChanged(auth, user => {
+            if (user && user.uid === ADMIN_UID) {
+                loginScreen.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                initializeDashboard();
+            } else {
+                dashboard.classList.add('hidden');
+                loginScreen.classList.remove('hidden');
+            }
+        });
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loginBtn.disabled = true;
+            loginError.textContent = '';
+            try {
+                await signInWithEmailAndPassword(auth, loginForm.email.value, loginForm.password.value);
+            } catch (error) {
+                loginError.textContent = 'Email atau password salah.';
+                loginBtn.disabled = false;
+            }
+        });
+
+        logoutBtn.addEventListener('click', () => signOut(auth));
+
+        // --- Dashboard Logic ---
+        function initializeDashboard() {
+            onSnapshot(collection(db, 'availableLicenses'), snapshot => {
+                allAvailableLicenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                availableCountEl.textContent = snapshot.size;
+                renderAvailableLicenses();
+            });
+
+            onSnapshot(collection(db, 'activatedLicenses'), snapshot => {
+                allActivatedLicenses = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                activatedCountEl.textContent = snapshot.size;
+                renderActivatedLicenses();
+            });
+            
+            onSnapshot(collection(db, 'terminatedLicenses'), snapshot => {
+                terminatedCountEl.textContent = snapshot.size;
+            });
+        }
+
+        // --- Render Functions ---
+        function renderAvailableLicenses() {
+            const searchTerm = searchAvailableInput.value.toLowerCase();
+            const filtered = allAvailableLicenses.filter(lic => lic.id.toLowerCase().includes(searchTerm));
+            
+            availableList.innerHTML = filtered.map(lic => `
+                <tr class="border-b border-gray-700">
+                    <td class="px-6 py-4 font-mono text-gray-300">${lic.id}</td>
+                    <td class="px-6 py-4 text-right">
+                        <button class="copy-btn text-gray-400 hover:text-white" data-key="${lic.id}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderActivatedLicenses() {
+            const searchTerm = searchActivatedInput.value.toLowerCase();
+            const filtered = allActivatedLicenses.filter(lic => 
+                lic.id.toLowerCase().includes(searchTerm) || 
+                lic.email.toLowerCase().includes(searchTerm)
+            );
+
+            activatedList.innerHTML = filtered.map(lic => `
+                 <tr class="border-b border-gray-700">
+                    <td class="px-6 py-4 font-mono text-gray-300">${lic.id}</td>
+                    <td class="px-6 py-4 text-gray-400">${lic.email}</td>
+                    <td class="px-6 py-4">
+                        <button class="terminate-btn btn-danger text-white text-xs font-bold py-1 px-3 rounded-full" data-key="${lic.id}" data-email="${lic.email}">
+                            Hentikan
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        searchAvailableInput.addEventListener('input', renderAvailableLicenses);
+        searchActivatedInput.addEventListener('input', renderActivatedLicenses);
+
+        // --- Action Handlers ---
+        generateBtn.addEventListener('click', async () => {
+            const count = parseInt(generateCountInput.value);
+            if (isNaN(count) || count < 1 || count > 100) {
+                showToast("Masukkan jumlah antara 1 dan 100.", true);
+                return;
+            }
+
+            try {
+                const batch = writeBatch(db);
+                for (let i = 0; i < count; i++) {
+                    const key = `GEO-${generateRandomString(4)}-${generateRandomString(4)}-${generateRandomString(4)}`;
+                    const newLicenseRef = doc(db, "availableLicenses", key);
+                    batch.set(newLicenseRef, { createdAt: serverTimestamp() });
+                }
+                await batch.commit();
+                showToast(`${count} lisensi baru berhasil dibuat.`);
+            } catch (error) {
+                console.error("Error generating licenses:", error);
+                showToast("Gagal membuat lisensi.", true);
+            }
+        });
+        
+        // Use event delegation for dynamically created buttons
+        document.body.addEventListener('click', async (e) => {
+            if (e.target.closest('.copy-btn')) {
+                const key = e.target.closest('.copy-btn').dataset.key;
+                navigator.clipboard.writeText(key).then(() => {
+                    showToast("Kunci lisensi disalin!");
+                });
+            }
+
+            if (e.target.closest('.terminate-btn')) {
+                const key = e.target.closest('.terminate-btn').dataset.key;
+                const email = e.target.closest('.terminate-btn').dataset.email;
+                
+                const confirmed = await showConfirmation(
+                    'Hentikan Lisensi?',
+                    `Anda yakin ingin menghentikan lisensi <strong>${key}</strong> milik <strong>${email}</strong>? Aksi ini tidak dapat dibatalkan.`
+                );
+
+                if (confirmed) {
+                    await terminateLicense(key);
+                }
+            }
+        });
+
+        async function terminateLicense(licenseKey) {
+            try {
+                const activatedRef = doc(db, "activatedLicenses", licenseKey);
+                const terminatedRef = doc(db, "terminatedLicenses", licenseKey);
+
+                await runTransaction(db, async (transaction) => {
+                    const activatedDoc = await transaction.get(activatedRef);
+                    if (!activatedDoc.exists()) {
+                        throw new Error("Lisensi ini tidak ditemukan di daftar aktif.");
+                    }
+                    const licenseData = activatedDoc.data();
+                    transaction.set(terminatedRef, { ...licenseData, terminatedAt: serverTimestamp() });
+                    transaction.delete(activatedRef);
+                });
+
+                showToast(`Lisensi ${licenseKey} berhasil dihentikan.`);
+            } catch (error) {
+                console.error("Error terminating license:", error);
+                showToast(error.message || "Gagal menghentikan lisensi.", true);
+            }
+        }
+
+        // --- Helper Functions ---
+        function generateRandomString(length) {
+            const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+
+        let toastTimeout;
+        function showToast(message, isError = false) {
+            clearTimeout(toastTimeout);
+            toastText.textContent = message;
+            toast.className = `fixed bottom-5 right-5 card p-4 rounded-lg shadow-lg opacity-0 toast ${isError ? 'bg-red-500' : 'bg-green-500'}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.remove('opacity-0');
+                toast.style.transform = 'translateY(0)';
+            }, 10);
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0');
+                toast.style.transform = 'translateY(20px)';
+                 setTimeout(() => toast.classList.add('hidden'), 300);
+            }, 3000);
+        }
+        
+        function showConfirmation(title, text) {
+            return new Promise(resolve => {
+                modalTitle.innerHTML = title;
+                modalText.innerHTML = text;
+                confirmationModal.classList.remove('hidden');
+
+                const handleConfirm = () => {
+                    confirmationModal.classList.add('hidden');
+                    cleanup();
+                    resolve(true);
+                };
+                const handleCancel = () => {
+                    confirmationModal.classList.add('hidden');
+                    cleanup();
+                    resolve(false);
+                };
+                const cleanup = () => {
+                    modalConfirmBtn.removeEventListener('click', handleConfirm);
+                    modalCancelBtn.removeEventListener('click', handleCancel);
+                };
+
+                modalConfirmBtn.addEventListener('click', handleConfirm);
+                modalCancelBtn.addEventListener('click', handleCancel);
+            });
+        }
+
+    </script>
+</body>
+</html>
+
