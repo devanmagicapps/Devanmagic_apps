@@ -107,9 +107,9 @@
             </svg>
         </button>
         <h2 class="text-3xl font-bold mt-12 mb-8 text-white">Menu</h2>
-        <button onclick="showContactModal()" class="text-lg text-cyan-400 font-semibold mb-6 hover:underline focus:outline-none">Kontak</button>
-        <button onclick="showSocialMediaModal()" class="text-lg text-cyan-400 font-semibold mb-6 hover:underline focus:outline-none">Social Media</button>
-        <button onclick="showAboutModal()" class="text-lg text-cyan-400 font-semibold mb-6 hover:underline focus:outline-none">About</button>
+        <button id="contact-btn" class="text-lg text-cyan-400 font-semibold mb-6 hover:underline focus:outline-none">Kontak</button>
+        <button id="social-media-btn" class="text-lg text-cyan-400 font-semibold mb-6 hover:underline focus:outline-none">Social Media</button>
+        <button id="about-btn" class="text-lg text-cyan-400 font-semibold mb-6 hover:underline focus:outline-none">About</button>
     </div>
 
     <!-- Product Grid -->
@@ -200,6 +200,11 @@
         const sidebarMenu = document.getElementById('sidebar-menu');
         const closeSidebarBtn = document.getElementById('close-sidebar-btn');
         const closeInfoModalBtn = document.getElementById('close-info-modal');
+        
+        // Memperbarui tombol sidebar agar memiliki ID
+        const contactBtn = document.getElementById('contact-btn');
+        const socialMediaBtn = document.getElementById('social-media-btn');
+        const aboutBtn = document.getElementById('about-btn');
 
         // Fungsi untuk memformat harga
         const formatPrice = (price) => {
@@ -209,7 +214,7 @@
         // Render semua aplikasi ke dalam grid
         const renderApps = () => {
             appGrid.innerHTML = apps.map(app => `
-                <div class="app-card bg-gray-950 rounded-3xl shadow-2xl transition-transform duration-300 transform hover:scale-105 cursor-pointer" onclick="showProductModal(${app.id})">
+                <div class="app-card bg-gray-950 rounded-3xl shadow-2xl transition-transform duration-300 transform hover:scale-105 cursor-pointer" data-id="${app.id}">
                     <!-- Menggunakan video YouTube sebagai thumbnail -->
                     <iframe class="w-full h-48 rounded-t-3xl app-preview transition-transform duration-300" src="${app.preview.replace('?autoplay=1&mute=1', '?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0')}" frameborder="0" allow="autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <div class="p-6">
@@ -217,7 +222,7 @@
                         <p class="text-sm text-gray-400 mb-4">${app.shortDescription}</p>
                         <div class="flex justify-between items-center">
                             <span class="text-lg font-bold text-cyan-400">${formatPrice(app.price)}</span>
-                            <button class="add-to-cart-btn bg-cyan-600 text-white font-semibold py-2 px-4 rounded-full transition duration-200 hover:bg-cyan-700">
+                            <button class="add-to-cart-btn bg-cyan-600 text-white font-semibold py-2 px-4 rounded-full transition duration-200 hover:bg-cyan-700" data-id="${app.id}">
                                 <span class="hidden md:inline">Lihat Detail</span>
                                 <span class="inline md:hidden">Detail</span>
                             </button>
@@ -242,12 +247,17 @@
                         <h2 class="text-3xl font-bold text-white mb-2">${app.name}</h2>
                         <span class="inline-block px-3 py-1 text-sm font-semibold rounded-full text-cyan-200 bg-cyan-600 mb-4">${formatPrice(app.price)}</span>
                         <p class="text-gray-300 mb-6 leading-relaxed">${app.fullDescription}</p>
-                        <button class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition duration-200 hover:bg-blue-700 button-glow" onclick="addToCart(${app.id})">Tambahkan ke Keranjang</button>
+                        <button id="add-to-cart-modal-btn" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-full transition duration-200 hover:bg-blue-700 button-glow" data-id="${app.id}">Tambahkan ke Keranjang</button>
                     </div>
                 </div>
             `;
             productModal.classList.remove('hidden');
             productModal.classList.add('flex');
+
+            // Tambahkan event listener untuk tombol "Tambahkan ke Keranjang" di modal
+            document.getElementById('add-to-cart-modal-btn').addEventListener('click', () => {
+                addToCart(appId);
+            });
         };
 
         // Menutup modal produk
@@ -463,10 +473,35 @@
         };
 
 
-        // Jalankan fungsi saat halaman dimuat
+        // Tambahkan event listener untuk semua tombol
         document.addEventListener('DOMContentLoaded', () => {
             renderApps();
             updateCart();
+
+            // Event listener untuk grid produk (menggunakan event delegation)
+            appGrid.addEventListener('click', (e) => {
+                const appCard = e.target.closest('.app-card');
+                const addToCartBtn = e.target.closest('.add-to-cart-btn');
+
+                if (appCard && !addToCartBtn) {
+                    const appId = appCard.dataset.id;
+                    showProductModal(parseInt(appId));
+                }
+            });
+
+            // Event listener untuk tombol "Lihat Detail"
+            appGrid.addEventListener('click', (e) => {
+                const addToCartBtn = e.target.closest('.add-to-cart-btn');
+                if (addToCartBtn) {
+                    const appId = addToCartBtn.dataset.id;
+                    showProductModal(parseInt(appId));
+                }
+            });
+
+            // Event listener untuk tombol di sidebar
+            contactBtn.addEventListener('click', showContactModal);
+            socialMediaBtn.addEventListener('click', showSocialMediaModal);
+            aboutBtn.addEventListener('click', showAboutModal);
         });
     </script>
 </body>
