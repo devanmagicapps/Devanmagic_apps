@@ -98,8 +98,6 @@
 </div>
 
 <script type="module">
-    import { apps as existingApps } from './products.js';
-
     function showCustomAlert(message, type = 'success') {
         let alertBox = document.getElementById('custom-alert');
         if (!alertBox) {
@@ -123,8 +121,37 @@
             alertBox.classList.remove('show');
         }, 3000);
     }
+    
+    // Fungsi untuk memuat data produk secara dinamis
+    async function loadProducts() {
+        try {
+            const response = await fetch("https://devanapps.vercel.app/products.js");
+            const code = await response.text();
+            
+            const blob = new Blob([code], { type: "application/javascript" });
+            const url = URL.createObjectURL(blob);
+            
+            const module = await import(url);
+            
+            window.existingApps = module.apps;
+            
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error("Gagal memuat module produk:", err);
+            showCustomAlert('Gagal memuat data produk yang sudah ada. Mohon periksa URL atau koneksi internet.', 'error');
+        }
+    }
+
+    // Panggil fungsi untuk memuat data saat halaman dimuat
+    loadProducts();
 
     document.getElementById('generate-btn').addEventListener('click', () => {
+        // Cek apakah data produk sudah dimuat
+        if (!window.existingApps) {
+            showCustomAlert('Data produk belum dimuat. Mohon tunggu sebentar.', 'error');
+            return;
+        }
+
         const productName = document.getElementById('product-name').value;
         const productPrice = parseInt(document.getElementById('product-price').value);
         const productShortDesc = document.getElementById('product-short-desc').value;
@@ -149,8 +176,9 @@
             showCustomAlert(message, 'error');
             return;
         }
-
-        const newId = existingApps.length > 0 ? Math.max(...existingApps.map(app => app.id)) + 1 : 1;
+        
+        // Gunakan data dari window.existingApps
+        const newId = window.existingApps.length > 0 ? Math.max(...window.existingApps.map(app => app.id)) + 1 : 1;
         
         const newProduct = {
             id: newId,
@@ -161,9 +189,9 @@
             image: `https://placehold.co/400x300/1e1e1e/d1d5db?text=${encodeURIComponent(productName.replace(/ /g, '+'))}`,
             preview: productPreview
         };
-
-        const updatedApps = [...existingApps, newProduct];
-
+        
+        const updatedApps = [...window.existingApps, newProduct];
+        
         const updatedCode = `export const apps = ${JSON.stringify(updatedApps, null, 4)};`;
         newCodeElement.value = updatedCode;
 
