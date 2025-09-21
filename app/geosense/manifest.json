@@ -1,8 +1,8 @@
 {
-  "name": "Maps Prediction",
+  "name": "Geosense",
   "short_name": "Calendar",
   "description": "Aplikasi prediksi free choice di google map / google search",
-  "start_url": ".",
+  "start_url": "./app.html",
   "display": "standalone",
   "theme_color": "#000000",
   "icons": [
