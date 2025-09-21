@@ -216,7 +216,7 @@
             appGrid.innerHTML = apps.map(app => `
                 <div class="app-card bg-gray-950 rounded-3xl shadow-2xl transition-transform duration-300 transform hover:scale-105 cursor-pointer" data-id="${app.id}">
                     <!-- Menggunakan video YouTube sebagai thumbnail -->
-                    <iframe class="w-full h-48 rounded-t-3xl app-preview transition-transform duration-300" src="${app.preview.replace('?autoplay=1&mute=1', '?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0')}" frameborder="0" allow="autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe class="w-full h-48 rounded-t-3xl app-preview transition-transform duration-300" src="${app.preview.replace('?autoplay=1&mute=1', '?mute=1&controls=0&modestbranding=1&rel=0')}" frameborder="0" allow="encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     <div class="p-6">
                         <h2 class="text-2xl font-bold text-white mb-2">${app.name}</h2>
                         <p class="text-sm text-gray-400 mb-4">${app.shortDescription}</p>
@@ -241,7 +241,7 @@
             modalContent.innerHTML = `
                 <div class="flex flex-col md:flex-row gap-6">
                     <div class="md:w-1/2 rounded-3xl overflow-hidden shadow-lg border-2 border-cyan-500">
-                        <iframe class="w-full h-48 md:h-72" src="${app.preview}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <iframe class="w-full h-48 md:h-72" src="${app.preview}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
                     <div class="md:w-1/2">
                         <h2 class="text-3xl font-bold text-white mb-2">${app.name}</h2>
